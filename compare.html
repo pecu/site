@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Model Comparison</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">QBS Fall 2017 - Group 2</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="data.html">Data Mining</a>
+</li>
+<li>
+  <a href="model.html">Model Building</a>
+</li>
+<li>
+  <a href="compare.html">Model Comparison</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Model Comparison</h1>
+
+</div>
+
+
+<div id="import-values" class="section level2">
+<h2>Import Values</h2>
+<p>Import values computed from Model Building .</p>
+<pre class="r"><code># read files
+source(file.path(&quot;datasets&quot;, &quot;model.R&quot;))</code></pre>
+</div>
+<div id="model-comparison" class="section level2">
+<h2>Model Comparison</h2>
+<p>It is not apparent which is the better model, since the model weights are approximately the same.</p>
+<p>We can conclude that <strong>the effect of movie type</strong> is as significant as a predictor as <strong>the effect of log box office results</strong> and <strong>the effect of movie scores</strong> on <strong>crime rates</strong>.</p>
+<pre class="r"><code># compare models 
+compare(m1, m2) </code></pre>
+<pre><code>##     WAIC pWAIC dWAIC weight    SE  dSE
+## m1 -33.2   6.0   0.0   0.67 10.74   NA
+## m2 -31.8   4.6   1.4   0.33 10.80 9.37</code></pre>
+</div>
+<div id="model-averaging" class="section level2">
+<h2>Model Averaging</h2>
+<p>Merge datasets d1 and d2 to create prediction data.</p>
+<pre class="r"><code># combine d1, d2
+d = merge(d1,d2)</code></pre>
+<div id="model-1" class="section level3">
+<h3>Model 1</h3>
+<p>Find significant predictors of Model 1 with summary. As shown below, predictor <strong>Bx3_c</strong> is the most significant, and hence we will examine <strong>the effect of movie type - “Neutral”</strong> on <strong>log crime cases</strong>.</p>
+<pre class="r"><code>summary(lm(log_crime~ Bx1_c + Bx2_c + Bx3_c, data=d1, x=T))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log_crime ~ Bx1_c + Bx2_c + Bx3_c, data = d1, x = T)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.247296 -0.092399 -0.009366  0.049547  0.298875 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 11.360622   0.022414 506.863   &lt;2e-16 ***
+## Bx1_c       -0.033509   0.025013  -1.340   0.1911    
+## Bx2_c       -0.009411   0.025216  -0.373   0.7118    
+## Bx3_c       -0.056353   0.026329  -2.140   0.0412 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.1268 on 28 degrees of freedom
+## Multiple R-squared:  0.3669, Adjusted R-squared:  0.299 
+## F-statistic: 5.408 on 3 and 28 DF,  p-value: 0.004604</code></pre>
+<p>Plot the model-averaged predictions of this model set.</p>
+<pre class="r"><code># Model 1
+Bx3_c.seq &lt;- seq(from=-5.5, to=4, length.out = 30)
+d.predict &lt;- list(
+  log_crime = rep(0,30),
+  Bx1_c = rep(0,30),
+  Bx2_c = rep(0,30),
+  Bx3_c = Bx3_c.seq,
+  log_box_office = rep(0,30),
+  score.s = rep(0,30),
+  Bscore.s = rep(0,30)
+)
+
+  pred.m &lt;- link( m1 , data=d.predict )</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre class="r"><code>  mu &lt;- apply( pred.m , 2 , mean )
+  mu.PI &lt;- apply( pred.m , 2 , PI )
+  
+  plot( log_crime ~ Bx3_c , d , col=rangi2 )
+  lines( Bx3_c.seq , mu , lty=2 )
+  lines( Bx3_c.seq, mu.PI[1,] , lty=2 )
+  lines( Bx3_c.seq , mu.PI[2,] , lty=2 )
+  
+  log_crime.ensemble &lt;- ensemble( m1 , m2 ,data=d.predict )</code></pre>
+<pre><code>## Constructing posterior predictions</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre><code>## Constructing posterior predictions</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre class="r"><code>  mu &lt;- apply( log_crime.ensemble$link , 2 , mean )
+  mu.PI &lt;- apply( log_crime.ensemble$link , 2 , PI )
+  lines( Bx3_c.seq , mu )
+  shade( mu.PI , Bx3_c.seq )</code></pre>
+<p><img src="compare_files/figure-html/m1.average-1.png" width="672" /></p>
+</div>
+<div id="model-2" class="section level3">
+<h3>Model 2</h3>
+<p>Find significant predictors of Model 2 with summary. As shown below, predictor <strong>log_box_office</strong> is the most significant, and hence we will examine <strong>the effect of log box office results</strong> on <strong>log crime cases</strong>.</p>
+<pre class="r"><code>summary(lm(log_crime~ log_box_office + score.s + Bscore.s, data=d2, x=T))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log_crime ~ log_box_office + score.s + Bscore.s, 
+##     data = d2, x = T)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.23284 -0.08889 -0.00420  0.07127  0.35327 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    15.29620    1.66635   9.179 6.15e-10 ***
+## log_box_office -0.22799    0.09635  -2.366   0.0251 *  
+## score.s        -4.17023    7.02684  -0.593   0.5576    
+## Bscore.s        0.23202    0.40650   0.571   0.5727    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.134 on 28 degrees of freedom
+## Multiple R-squared:  0.2928, Adjusted R-squared:  0.217 
+## F-statistic: 3.863 on 3 and 28 DF,  p-value: 0.01976</code></pre>
+<p>Plot the model-averaged predictions of this model set.</p>
+<pre class="r"><code># Model 2
+log_box_office.seq &lt;- seq(from=16, to=18, length.out = 30)
+d.predict &lt;- list(
+  log_crime = rep(0,30),
+  Bx1_c = rep(0,30),
+  Bx2_c = rep(0,30),
+  Bx3_c = rep(0,30),
+  log_box_office = log_box_office.seq,
+  score.s = rep(0,30),
+  Bscore.s = rep(0,30)
+)
+
+  pred.m &lt;- link( m2 , data=d.predict )</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre class="r"><code>  mu &lt;- apply( pred.m , 2 , mean )
+  mu.PI &lt;- apply( pred.m , 2 , PI )
+  
+  plot( log_crime ~ log_box_office , d , col=rangi2 )
+  lines( log_box_office.seq , mu , lty=2 )
+  lines( log_box_office.seq, mu.PI[1,] , lty=2 )
+  lines( log_box_office.seq , mu.PI[2,] , lty=2 )
+  
+  log_crime.ensemble &lt;- ensemble( m1 , m2 ,data=d.predict )</code></pre>
+<pre><code>## Constructing posterior predictions</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre><code>## Constructing posterior predictions</code></pre>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre class="r"><code>  mu &lt;- apply( log_crime.ensemble$link , 2 , mean )
+  mu.PI &lt;- apply( log_crime.ensemble$link , 2 , PI )
+  lines( log_box_office.seq , mu )
+  shade( mu.PI , log_box_office.seq )</code></pre>
+<p><img src="compare_files/figure-html/m2.average-1.png" width="672" /></p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
